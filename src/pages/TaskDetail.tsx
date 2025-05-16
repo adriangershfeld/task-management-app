@@ -1,16 +1,16 @@
+// TaskDetail page displays details for a single task
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTasks } from '../context/TaskContext';
 import Navbar from '../components/Navbar';
-import './TaskDetail.css';
 
 const TaskDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getTask, deleteTask } = useTasks();
-  
   const task = getTask(id || '');
 
+  // If task not found, show message
   if (!task) {
     return (
       <>
@@ -23,6 +23,7 @@ const TaskDetail: React.FC = () => {
     );
   }
 
+  // Handle delete button click
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this task?')) {
       deleteTask(task.id);
@@ -41,7 +42,6 @@ const TaskDetail: React.FC = () => {
             <button className="delete-btn" onClick={handleDelete}>Delete</button>
           </div>
         </div>
-
         <div className="detail-info">
           <div className="detail-row">
             <span className="detail-label">Status:</span>
@@ -49,21 +49,18 @@ const TaskDetail: React.FC = () => {
               {task.status}
             </span>
           </div>
-          
           <div className="detail-row">
             <span className="detail-label">Priority:</span>
             <span className={`detail-value priority-${task.priority.toLowerCase()}`}>
               {task.priority}
             </span>
           </div>
-          
           <div className="detail-row">
             <span className="detail-label">Due Date:</span>
             <span className="detail-value">
               {new Date(task.dueDate).toLocaleDateString()}
             </span>
           </div>
-          
           <div className="detail-row">
             <span className="detail-label">Created:</span>
             <span className="detail-value">
@@ -71,12 +68,10 @@ const TaskDetail: React.FC = () => {
             </span>
           </div>
         </div>
-
         <div className="task-description">
           <h3>Description</h3>
           <p>{task.description}</p>
         </div>
-        
         <Link to="/" className="back-btn">Back to Dashboard</Link>
       </div>
     </>

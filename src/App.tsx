@@ -1,6 +1,5 @@
-import React from 'react';
+import { FC } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Auth0Provider } from '@auth0/auth0-react';
 import { AuthProvider } from './context/AuthContext';
 import { TaskProvider } from './context/TaskContext';
 import PrivateRoute from './components/PrivateRoute';
@@ -8,18 +7,21 @@ import Dashboard from './pages/Dashboard';
 import TaskDetail from './pages/TaskDetail';
 import TaskForm from './pages/TaskForm';
 import Login from './pages/Login';
-import Callback from './pages/Callback';  // Import the Callback component
+import Callback from './pages/Callback';
 import './App.css';
 
-const App: React.FC = () => {
+const App: FC = () => {
   return (
     <AuthProvider>
       <TaskProvider>
         <Router>
           <div className="app">
             <Routes>
+              {/* Public routes */}
               <Route path="/login" element={<Login />} />
-              <Route path="/callback" element={<Callback />} />  {/* Add the Callback route */}
+              <Route path="/callback" element={<Callback />} />
+              
+              {/* Private routes */}
               <Route 
                 path="/" 
                 element={
@@ -52,6 +54,8 @@ const App: React.FC = () => {
                   </PrivateRoute>
                 } 
               />
+              
+              {/* Catch-all route */}
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>

@@ -1,14 +1,33 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { useState, FC } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import './Navbar.css';
 
-const Navbar: React.FC = () => {
+const Navbar: FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout(); // Call logout without arguments
-    window.location.href = window.location.origin; // Redirect after logout
+    setIsLoggingOut(true);
+    
+    // Safety timeout to reset state if logout hangs
+    const resetTimeout = setTimeout(() => setIsLoggingOut(false), 5000);
+    
+    // Fallback for Auth0 logout failures
+    const fallbackTimeout = setTimeout(() => {
+      clearTimeout(resetTimeout);
+      localStorage.clear();
+      sessionStorage.clear();
+      navigate('/login');
+      window.location.reload();
+    }, 3000);
+    
+    try {
+      logout();
+      clearTimeout(fallbackTimeout);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (
@@ -24,8 +43,12 @@ const Navbar: React.FC = () => {
             <span className="navbar-item user-info">
               {user?.name}
             </span>
-            <button className="logout-button" onClick={handleLogout}>
-              Logout
+            <button 
+              className="logout-button" 
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+            >
+              {isLoggingOut ? 'Logging out...' : 'Logout'}
             </button>
           </div>
         </div>

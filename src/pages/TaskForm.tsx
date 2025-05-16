@@ -1,10 +1,10 @@
+// TaskForm page for creating and editing tasks
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTasks } from '../context/TaskContext';
 import { useAuth } from '../context/AuthContext';
 import { Task, TaskStatus, TaskPriority } from '../types';
 import Navbar from '../components/Navbar';
-import './TaskForm.css';
 
 const TaskForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,6 +13,7 @@ const TaskForm: React.FC = () => {
   const { user } = useAuth();
   const isEditMode = Boolean(id);
 
+  // Initial form state
   const initialFormState = {
     title: '',
     description: '',
@@ -24,6 +25,7 @@ const TaskForm: React.FC = () => {
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // If editing, load task data
   useEffect(() => {
     if (isEditMode) {
       const taskToEdit = getTask(id || '');
@@ -41,37 +43,26 @@ const TaskForm: React.FC = () => {
     }
   }, [id, isEditMode, getTask, navigate]);
 
+  // Validate form fields
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.title.trim()) {
-      newErrors.title = 'Title is required';
-    }
-
-    if (!formData.description.trim()) {
-      newErrors.description = 'Description is required';
-    }
-
-    if (!formData.dueDate) {
-      newErrors.dueDate = 'Due date is required';
-    }
-
+    if (!formData.title.trim()) newErrors.title = 'Title is required';
+    if (!formData.description.trim()) newErrors.description = 'Description is required';
+    if (!formData.dueDate) newErrors.dueDate = 'Due date is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handle form submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
+    if (!validateForm()) return;
     if (isEditMode && id) {
       const existingTask = getTask(id);
       if (existingTask) {
@@ -88,7 +79,6 @@ const TaskForm: React.FC = () => {
         userId: user?.sub || ''
       });
     }
-
     navigate('/');
   };
 
@@ -110,7 +100,6 @@ const TaskForm: React.FC = () => {
             />
             {errors.title && <span className="error-message">{errors.title}</span>}
           </div>
-
           <div className="form-group">
             <label htmlFor="description">Description</label>
             <textarea
@@ -122,7 +111,6 @@ const TaskForm: React.FC = () => {
             />
             {errors.description && <span className="error-message">{errors.description}</span>}
           </div>
-
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="status">Status</label>
@@ -137,7 +125,6 @@ const TaskForm: React.FC = () => {
                 <option value={TaskStatus.COMPLETED}>{TaskStatus.COMPLETED}</option>
               </select>
             </div>
-
             <div className="form-group">
               <label htmlFor="priority">Priority</label>
               <select
@@ -152,7 +139,6 @@ const TaskForm: React.FC = () => {
               </select>
             </div>
           </div>
-
           <div className="form-group">
             <label htmlFor="dueDate">Due Date</label>
             <input
@@ -165,7 +151,6 @@ const TaskForm: React.FC = () => {
             />
             {errors.dueDate && <span className="error-message">{errors.dueDate}</span>}
           </div>
-
           <div className="form-actions">
             <button type="button" className="cancel-btn" onClick={() => navigate('/')}>Cancel</button>
             <button type="submit" className="submit-btn">{isEditMode ? 'Update Task' : 'Create Task'}</button>
