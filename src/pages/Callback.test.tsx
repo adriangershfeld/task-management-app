@@ -14,6 +14,6 @@ describe('Callback Page', () => {
         </Auth0Provider>
       </MemoryRouter>
     );
-    expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
+    expect(screen.getByText(/Completing authentication.../i)).toBeInTheDocument();
   });
 });

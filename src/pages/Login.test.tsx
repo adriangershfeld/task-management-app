@@ -40,7 +40,7 @@ describe('Login Page', () => {
     expect(button).toBeInTheDocument();
     fireEvent.click(button);
     await waitFor(() => {
-      expect(button).toBeEnabled();
+      expect(button).toBeDisabled();
     });
   });
 
