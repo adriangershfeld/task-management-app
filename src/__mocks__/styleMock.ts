@@ -1,3 +1,3 @@
-// Mock for file imports (e.g., images, fonts)
-const fileMock = 'test-file-stub';
-export default fileMock;
+// Mock for style imports (e.g., CSS, SCSS)
+const styleMock = {};
+export default styleMock;
